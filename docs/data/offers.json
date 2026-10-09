@@ -92,7 +92,7 @@
       }
     }
   },
-  "generated": "2026-10-08",
+  "generated": "2026-10-09",
   "offers": [],
   "site": {
     "ads": {
@@ -106,9 +106,9 @@
       "utm_source": "isic_kosice"
     },
     "app": "catalog",
-    "bot": "YOUR_BOT",
+    "bot": "studperks_bot",
     "name": "ISIC Košice",
-    "pages_url": "https://YOUR_GITHUB_USER.github.io/isic-kosice/",
-    "repo": "YOUR_GITHUB_USER/isic-kosice"
+    "pages_url": "https://lagrig.github.io/isic-kosice/",
+    "repo": "LaGrig/isic-kosice"
   }
 }
