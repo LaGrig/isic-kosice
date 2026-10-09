@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ISIC Košice</title>
+<meta name="description" content="Student offers for ISIC holders in Košice">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:var(--tg-theme-bg-color,#fff);
+  --fg:var(--tg-theme-text-color,#14181f);
+  --hint:var(--tg-theme-hint-color,#6b7280);
+  --surface:var(--tg-theme-secondary-bg-color,#f2f4f7);
+  --accent:var(--tg-theme-button-color,#2481cc);
+  --accent-fg:var(--tg-theme-button-text-color,#fff);
+  --link:var(--tg-theme-link-color,#2481cc);
+  --line:rgba(128,128,128,.22);--ad-line:var(--accent);
+  --ok:#1f9d55;--warn:#d97706;
+  --r:16px;
+}
+@supports (color:color-mix(in srgb,red,blue)){:root{--line:color-mix(in srgb,var(--fg) 10%,transparent);--ad-line:color-mix(in srgb,var(--accent) 35%,transparent)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+.app{max-width:720px;margin:0 auto;padding:0 0 calc(24px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+h1{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em;flex:1}
+h1 small{display:block;font-size:12px;font-weight:500;color:var(--hint);letter-spacing:0}
+.lang{display:flex;background:var(--surface);border-radius:999px;padding:3px}
+.lang button{border:0;background:none;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;color:var(--hint);cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--accent);color:var(--accent-fg)}
+.search{position:relative}
+.search input{width:100%;border:0;background:var(--surface);border-radius:12px;padding:11px 12px 11px 38px;outline:none}
+.search input:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.search span{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.55}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 2px;margin:0 -16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:none;border-radius:999px;padding:7px 12px;font-size:14px;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.chip.sm{font-size:13px;padding:5px 10px;color:var(--hint)}
+.chip.sm[aria-pressed=true]{color:var(--accent-fg)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+main{padding:12px 16px}
+.count{font-size:13px;color:var(--hint);margin:2px 0 10px}
+.card{display:flex;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid transparent;border-radius:var(--r);padding:12px;margin-bottom:10px;cursor:pointer}
+.card:active{transform:scale(.99)}
+.card.ad{border-color:var(--ad-line)}
+.ico{flex:none;width:46px;height:46px;border-radius:13px;background:var(--bg);display:grid;place-items:center;font-size:24px}
+.body{min-width:0;flex:1}
+.title{font-weight:650;font-size:16px;margin:0 0 2px;overflow-wrap:anywhere}
+.perk{color:var(--accent);font-weight:600;font-size:14px;margin:0 0 2px}
+.desc{color:var(--hint);font-size:14px;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.b{font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--hint)}
+.b.free{color:var(--ok)}.b.soon{color:var(--warn)}.b.ad{background:var(--accent);color:var(--accent-fg)}
+.star{flex:none;align-self:flex-start;border:0;background:none;font-size:20px;padding:2px;cursor:pointer;opacity:.9}
+.empty{text-align:center;color:var(--hint);padding:48px 16px}
+.empty big{display:block;font-size:40px;margin-bottom:8px}
+footer{padding:8px 16px;color:var(--hint);font-size:12.5px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+footer a{color:var(--link);text-decoration:none}
+/* bottom sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.42);opacity:0;pointer-events:none;transition:opacity .2s;z-index:10}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:11;max-width:720px;margin:0 auto;background:var(--bg);border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);max-height:88vh;overflow:auto}
+.open .scrim{opacity:1;pointer-events:auto}.open .sheet{transform:none}
+.grab{width:38px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.sheet h2{margin:8px 0 4px;font-size:21px;line-height:1.25}
+.sheet .perk{font-size:16px;margin-bottom:8px}
+.sheet p.d{margin:8px 0 12px;font-size:16px}
+.meta{display:grid;gap:6px;font-size:14px;color:var(--hint);margin:10px 0 16px}
+.actions{display:grid;grid-template-columns:1fr auto auto auto;gap:8px}
+.btn{border:0;border-radius:12px;padding:13px 14px;font-weight:650;cursor:pointer;background:var(--surface)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);text-align:center;text-decoration:none;display:block}
+.fine{font-size:12px;color:var(--hint);margin-top:12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="top">
+      <h1 id="t-name">ISIC Košice<small id="t-sub"></small></h1>
+      <div class="lang" id="lang" role="group" aria-label="Language"></div>
+    </div>
+    <label class="search"><span aria-hidden="true">🔍</span><input id="q" type="search" autocomplete="off" enterkeyhint="search"></label>
+    <div class="chips" id="cats" role="group"></div>
+    <div class="chips" id="flags" role="group" style="padding-top:8px"></div>
+  </header>
+  <main>
+    <div class="count" id="count" aria-live="polite"></div>
+    <div id="list"></div>
+  </main>
+  <footer id="foot"></footer>
+</div>
+
+<div id="layer">
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="s-title"></div>
+</div>
+
+<script>
+const tg = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) ? Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
+
+/* ---------- UI strings ---------- */
+const UI = {
+  en:{sub:"Student offers · Košice",ph:"Search offers…",all:"All",saved:"Saved",free:"Free",soon:"Ending soon",travel:"Free travel",fresh:"New",
+      n:"offers",empty:"Nothing found",emptyHint:"Try another category or clear filters.",open:"Open offer",share:"Share",report:"Report",
+      until:"Valid until",where:"Where",verified:"Checked",upd:"Updated",submit:"Suggest an offer",d:"d left",isic:"ISIC",ad:"Ad",
+      sponsor:"Sponsored by",fine:"Always check the terms on the provider's page — they can change.",star:"Save",unstar:"Remove",travelHint:"Reachable by free travel"},
+  sk:{sub:"Študentské ponuky · Košice",ph:"Hľadať ponuky…",all:"Všetko",saved:"Uložené",free:"Zadarmo",soon:"Čoskoro končí",travel:"Zadarmo MHD/vlak",fresh:"Nové",
+      n:"ponúk",empty:"Nič sa nenašlo",emptyHint:"Skús inú kategóriu alebo zruš filtre.",open:"Otvoriť ponuku",share:"Zdieľať",report:"Nahlásiť",
+      until:"Platí do",where:"Kde",verified:"Overené",upd:"Aktualizované",submit:"Navrhnúť ponuku",d:"d zostáva",isic:"ISIC",ad:"Reklama",
+      sponsor:"Sponzor",fine:"Podmienky si vždy over na stránke poskytovateľa — môžu sa zmeniť.",star:"Uložiť",unstar:"Odstrániť",travelHint:"Dostupné zadarmo"},
+  uk:{sub:"Студентські пропозиції · Кошице",ph:"Пошук пропозицій…",all:"Усе",saved:"Збережене",free:"Безкоштовно",soon:"Скоро закінчиться",travel:"Безкоштовний проїзд",fresh:"Нове",
+      n:"пропозицій",empty:"Нічого не знайдено",emptyHint:"Спробуй іншу категорію або скинь фільтри.",open:"Відкрити пропозицію",share:"Поділитись",report:"Повідомити",
+      until:"Діє до",where:"Де",verified:"Перевірено",upd:"Оновлено",submit:"Запропонувати",d:"дн.",isic:"ISIC",ad:"Реклама",
+      sponsor:"Рекламодавець",fine:"Умови завжди перевіряй на сторінці постачальника — вони можуть змінитися.",star:"Зберегти",unstar:"Прибрати",travelHint:"Можна доїхати безкоштовно"},
+  ru:{sub:"Студенческие предложения · Кошице",ph:"Поиск предложений…",all:"Все",saved:"Сохранённое",free:"Бесплатно",soon:"Скоро закончится",travel:"Бесплатный проезд",fresh:"Новое",
+      n:"предложений",empty:"Ничего не найдено",emptyHint:"Попробуй другую категорию или сбрось фильтры.",open:"Открыть предложение",share:"Поделиться",report:"Сообщить",
+      until:"Действует до",where:"Где",verified:"Проверено",upd:"Обновлено",submit:"Предложить",d:"дн.",isic:"ISIC",ad:"Реклама",
+      sponsor:"Рекламодатель",fine:"Условия всегда проверяй на странице поставщика — они могут измениться.",star:"Сохранить",unstar:"Убрать",travelHint:"Можно добраться бесплатно"}
+};
+const LOCALE = {en:"en-GB",sk:"sk-SK",uk:"uk-UA",ru:"ru-RU"};
+const LANGS = ["sk","en","uk","ru"];
+const FALL = ["en","sk","uk","ru"];
+
+/* ---------- state ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+function detectLang(){
+  const saved = store.get("lang", null); if (saved && LANGS.includes(saved)) return saved;
+  const c = ((tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code) || navigator.language || "en").slice(0,2).toLowerCase();
+  return LANGS.includes(c) ? c : "en";
+}
+const S = { lang: detectLang(), cat: "all", q: "", flags: new Set(), saved: new Set(store.get("saved", [])), data: null, ctx: "" };
+const T = k => UI[S.lang][k];
+const L = obj => { if (!obj) return ""; for (const l of [S.lang, ...FALL]) if (obj[l]) return obj[l]; return ""; };
+
+/* ---------- helpers ---------- */
+const today0 = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const daysLeft = iso => iso ? Math.round((new Date(iso + "T00:00:00") - today0()) / 864e5) : null;
+const fmt = iso => iso ? new Date(iso + "T00:00:00").toLocaleDateString(LOCALE[S.lang], {day:"numeric", month:"short", year:"numeric"}) : "";
+const isNew = o => { const a = daysLeft(o.added); return a !== null && a >= -14; };
+const catOf = id => S.data.categories[id] || S.data.categories.other;
+function openExternal(url){ if (tg && tg.openLink) tg.openLink(url); else window.open(url, "_blank", "noopener"); }
+function openTg(url){ if (tg && tg.openTelegramLink) tg.openTelegramLink(url); else window.open(url, "_blank", "noopener"); }
+function adUrl(a){ const u = new URL(a.url); u.searchParams.set("utm_source", S.data.site.ads.utm_source); u.searchParams.set("utm_medium", "miniapp"); u.searchParams.set("utm_campaign", a.id); return u.toString(); }
+function deeplink(param){
+  const s = S.data.site;
+  return (s.bot && s.app) ? `https://t.me/${s.bot}/${s.app}?startapp=${param}` : s.pages_url.replace(/\/$/, "") + "/#" + param;
+}
+
+/* ---------- filtering ---------- */
+function filtered(){
+  const q = S.q.trim().toLowerCase();
+  let list = S.data.offers.filter(o => {
+    if (S.cat === "saved") { if (!S.saved.has(o.id)) return false; }
+    else if (S.cat !== "all" && o.category !== S.cat) return false;
+    if (S.flags.has("free") && !o.free) return false;
+    if (S.flags.has("travel") && !o.free_transport) return false;
+    if (S.flags.has("fresh") && !isNew(o)) return false;
+    if (S.flags.has("soon")) { const d = daysLeft(o.valid_to); if (d === null || d > 7) return false; }
+    if (q) {
+      const hay = [...Object.values(o.title), ...Object.values(o.desc), ...Object.values(o.perk || {}), o.where, catOf(o.category).name[S.lang]].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  const soon = S.flags.has("soon");
+  list.sort((a, b) => soon ? (daysLeft(a.valid_to) - daysLeft(b.valid_to))
+    : (b.priority - a.priority) || (b.added > a.added ? 1 : b.added < a.added ? -1 : 0));
+  return list;
+}
+
+/* ---------- render ---------- */
+function badges(o, ad){
+  const b = [];
+  if (ad) b.push(`<span class="b ad">${esc(T("ad"))}</span>`);
+  else {
+    if (o.free) b.push(`<span class="b free">🆓 ${esc(T("free"))}</span>`);
+    if (o.isic) b.push(`<span class="b">🪪 ${T("isic")}</span>`);
+    if (o.free_transport) b.push(`<span class="b" title="${esc(T("travelHint"))}">🚆 ${esc(T("travel"))}</span>`);
+    if (isNew(o)) b.push(`<span class="b">✨ ${esc(T("fresh"))}</span>`);
+    const d = daysLeft(o.valid_to);
+    if (d !== null && d <= 7) b.push(`<span class="b soon">⏳ ${d} ${esc(T("d"))}</span>`);
+  }
+  return b.join("");
+}
+function card(o, ad){
+  const cat = catOf(o.category);
+  const star = ad ? "" : `<button class="star" data-star="${esc(o.id)}" aria-label="${esc(S.saved.has(o.id) ? T("unstar") : T("star"))}">${S.saved.has(o.id) ? "⭐" : "☆"}</button>`;
+  return `<div class="card${ad ? " ad" : ""}" role="button" tabindex="0" data-id="${esc(o.id)}" data-ad="${ad ? 1 : 0}">
+    <div class="ico" aria-hidden="true">${cat.emoji}</div>
+    <div class="body">
+      <p class="title">${esc(L(o.title))}</p>
+      ${L(o.perk) ? `<p class="perk">${esc(L(o.perk))}</p>` : ""}
+      <p class="desc">${esc(L(o.desc))}</p>
+      <div class="badges">${badges(o, ad)}</div>
+    </div>${star}</div>`;
+}
+function render(){
+  const list = filtered(), ads = S.data.ads, every = S.data.site.ads.every;
+  $("count").textContent = `${list.length} ${T("n")}`;
+  if (!list.length) {
+    $("list").innerHTML = `<div class="empty"><big>🔎</big><b>${esc(T("empty"))}</b><br>${esc(T("emptyHint"))}</div>`;
+    return;
+  }
+  let html = "", ai = 0;
+  list.forEach((o, i) => {
+    html += card(o, false);
+    if (ads.length && (i + 1) % every === 0 && !S.q) html += card(ads[ai++ % ads.length], true);
+  });
+  if (ads.length && list.length < every && !S.q && S.cat === "all") html += card(ads[0], true);
+  $("list").innerHTML = html;
+}
+function renderChrome(){
+  document.documentElement.lang = S.lang;
+  $("t-sub").textContent = T("sub");
+  $("q").placeholder = T("ph");
+  $("lang").innerHTML = LANGS.map(l => `<button data-lang="${l}" aria-pressed="${l === S.lang}">${l.toUpperCase()}</button>`).join("");
+  const cats = Object.entries(S.data.categories);
+  $("cats").innerHTML =
+    chip("all", `${T("all")}`) + chip("saved", `⭐ ${T("saved")}`) +
+    cats.map(([k, v]) => chip(k, `${v.emoji} ${v.name[S.lang]}`)).join("");
+  const F = [["free","🆓 " + T("free")], ["travel","🚆 " + T("travel")], ["soon","⏳ " + T("soon")], ["fresh","✨ " + T("fresh")]];
+  $("flags").innerHTML = F.map(([k, t]) => `<button class="chip sm" data-flag="${k}" aria-pressed="${S.flags.has(k)}">${esc(t)}</button>`).join("");
+  const s = S.data.site;
+  $("foot").innerHTML = `<span>${esc(T("upd"))}: ${esc(fmt(S.data.generated))}</span>` +
+    `<a href="#" data-submit="1">${esc(T("submit"))}</a>`;
+  $("sheet").dataset.lang = S.lang;
+}
+const chip = (k, t) => `<button class="chip" data-cat="${esc(k)}" aria-pressed="${S.cat === k}">${esc(t)}</button>`;
+
+/* ---------- detail sheet ---------- */
+function openSheet(id, isAd){
+  const o = (isAd ? S.data.ads : S.data.offers).find(x => x.id === id); if (!o) return;
+  S.ctx = isAd ? "ad:" + id : id;
+  const cat = catOf(o.category), end = isAd ? o.end : o.valid_to;
+  const meta = [];
+  if (o.where) meta.push(`<div>📍 ${esc(T("where"))}: <b>${esc(o.where)}</b></div>`);
+  if (end) meta.push(`<div>⏳ ${esc(T("until"))}: <b>${esc(fmt(end))}</b></div>`);
+  if (!isAd && o.verified) meta.push(`<div>✅ ${esc(T("verified"))}: ${esc(fmt(o.verified))}</div>`);
+  if (isAd) meta.push(`<div>📣 ${esc(T("sponsor"))}: <b>${esc(o.sponsor)}</b></div>`);
+  const href = isAd ? adUrl(o) : o.url;
+  $("sheet").innerHTML = `<div class="grab"></div>
+    <div style="font-size:34px" aria-hidden="true">${cat.emoji}</div>
+    <h2 id="s-title">${esc(L(o.title))}</h2>
+    ${L(o.perk) ? `<div class="perk">${esc(L(o.perk))}</div>` : ""}
+    <div class="badges">${badges(o, isAd)}</div>
+    <p class="d">${esc(L(o.desc))}</p>
+    <div class="meta">${meta.join("")}</div>
+    <div class="actions">
+      <a class="btn primary" id="go" href="${esc(href)}" rel="noopener sponsored">${esc(T("open"))} ↗</a>
+      ${isAd ? "" : `<button class="btn" id="sv" aria-label="${esc(T("star"))}">${S.saved.has(id) ? "⭐" : "☆"}</button>`}
+      <button class="btn" id="sh" aria-label="${esc(T("share"))}">↗️</button>
+      ${isAd ? "" : `<button class="btn" id="rp" aria-label="${esc(T("report"))}">⚠️</button>`}
+    </div>
+    <div class="fine">${esc(T("fine"))}</div>`;
+  $("layer").classList.add("open");
+  history.replaceState(null, "", "#" + (isAd ? "all" : "o_" + id));
+  if (tg) { tg.BackButton.show(); }
+  $("go").addEventListener("click", e => { e.preventDefault(); openExternal(href); });
+  $("sh").addEventListener("click", () => openTg(`https://t.me/share/url?url=${encodeURIComponent(deeplink(isAd ? "all" : "o_" + id))}&text=${encodeURIComponent(L(o.title))}`));
+  const sv = $("sv"); if (sv) sv.addEventListener("click", () => { toggleSave(id); sv.textContent = S.saved.has(id) ? "⭐" : "☆"; });
+  const rp = $("rp"); if (rp) rp.addEventListener("click", () => openExternal(`https://github.com/${S.data.site.repo}/issues/new?template=broken.yml&title=${encodeURIComponent("Broken/ended: " + id)}`));
+  if (tg) tg.HapticFeedback && tg.HapticFeedback.impactOccurred("light");
+}
+function closeSheet(){
+  $("layer").classList.remove("open"); S.ctx = "";
+  history.replaceState(null, "", location.pathname + location.search);
+  if (tg) tg.BackButton.hide();
+}
+function toggleSave(id){
+  S.saved.has(id) ? S.saved.delete(id) : S.saved.add(id);
+  store.set("saved", [...S.saved]); render();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-lang],[data-cat],[data-flag],[data-star],[data-id],[data-submit],#scrim");
+  if (!t) return;
+  if (t.id === "scrim") return closeSheet();
+  if (t.dataset.lang){ S.lang = t.dataset.lang; store.set("lang", S.lang); renderChrome(); render(); if (S.ctx) { const a = S.ctx.startsWith("ad:"); openSheet(a ? S.ctx.slice(3) : S.ctx, a); } return; }
+  if (t.dataset.cat){ S.cat = t.dataset.cat; renderChrome(); render(); window.scrollTo({top:0, behavior:"smooth"}); return; }
+  if (t.dataset.flag){ const f = t.dataset.flag; S.flags.has(f) ? S.flags.delete(f) : S.flags.add(f); renderChrome(); render(); return; }
+  if (t.dataset.star){ e.stopPropagation(); toggleSave(t.dataset.star); return; }
+  if (t.dataset.submit){ e.preventDefault(); openExternal(`https://github.com/${S.data.site.repo}/issues/new?template=submit-offer.yml`); return; }
+  if (t.dataset.id) return openSheet(t.dataset.id, t.dataset.ad === "1");
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeSheet();
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".card")) { e.preventDefault(); e.target.click(); }
+});
+$("q").addEventListener("input", e => { S.q = e.target.value; render(); });
+if (tg) tg.BackButton.onClick(closeSheet);
+
+/* ---------- boot ---------- */
+async function boot(){
+  try {
+    const r = await fetch("data/offers.json?v=" + Math.floor(Date.now() / 36e5), {cache: "no-cache"});
+    S.data = await r.json();
+  } catch (err) {
+    $("list").innerHTML = `<div class="empty"><big>📡</big>Offline</div>`; return;
+  }
+  document.title = S.data.site.name;
+  $("t-name").firstChild.textContent = S.data.site.name;
+  renderChrome();
+  // deep links: Telegram startapp param or URL hash  (o_<id> | c_<category> | all)
+  const p = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) || location.hash.slice(1);
+  if (p && p.startsWith("c_") && S.data.categories[p.slice(2)]) { S.cat = p.slice(2); renderChrome(); }
+  render();
+  if (p && p.startsWith("o_")) openSheet(p.slice(2), false);
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+example: true
+id: example-games
+category: games
+url: https://example.com/games
+isic: false
+free: true
+valid_to: 2026-10-15
+verified: 2026-10-09
+added: 2026-10-07
+title: {en: "Example: free game weekend", sk: "Príklad: hra zadarmo cez víkend", uk: "Приклад: гра безкоштовно на вихідних", ru: "Пример: игра бесплатно на выходных"}
+desc:
+  en: "Placeholder. Short-lived offers are the main reason for auto-expiry."
+  uk: "Приклад. Короткі акції — головна причина автоматичного завершення."

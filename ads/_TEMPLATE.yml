@@ -1,0 +1,13 @@
+# Рекламная карточка (партнёр оплатил размещение). Имя файла = id. Пометка «Реклама» ставится автоматически.
+id: sponsor-spring-2027
+sponsor: "Название рекламодателя"   # показывается в пометке
+category: food                      # для иконки; необязательно
+url: https://example.com/promo
+start: 2026-11-01
+end: 2026-11-30
+placements: [channel, app]          # где показывать
+channel_posts: 2                    # сколько постов в канале оплачено
+weight: 1                           # при нескольких рекламодателях выше = раньше
+title: {en: "Title", sk: "Názov", uk: "Заголовок", ru: "Заголовок"}
+perk: {en: "10 % off with ISIC"}
+desc: {en: "Same tone as regular offers: what it is and how to claim it."}

@@ -1,0 +1,17 @@
+example: true
+id: example-event
+category: events
+url: https://example.com/event
+isic: true
+free: true
+free_transport: true
+where: Košice
+valid_to: 2026-12-20
+verified: 2026-10-09
+added: 2026-10-08
+title: {en: "Example: free student night", sk: "Príklad: študentská noc zadarmo", uk: "Приклад: безкоштовна студентська ніч", ru: "Пример: бесплатная студенческая ночь"}
+desc:
+  en: "Placeholder event. Free entry with ISIC, reachable by free public transport."
+  sk: "Ukážkové podujatie. Vstup zadarmo s ISIC, dostupné zadarmo MHD."
+  uk: "Приклад події. Вхід безкоштовно з ISIC, доїхати можна безкоштовно."
+  ru: "Пример события. Вход бесплатно по ISIC, добраться можно бесплатно."

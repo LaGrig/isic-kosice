@@ -1,0 +1,26 @@
+# Шаблон оффера. Скопируй как offers/<id>.yml (имя файла = id). Файлы с «_» в начале игнорируются.
+id: my-offer-id                 # латиница, цифры, дефис
+category: software              # free | subs | events | trips | software | study | games | music | food | other
+url: https://example.com/offer  # только https, ведёт на страницу условий
+isic: true                      # нужна ли карта ISIC
+free: false                     # полностью бесплатно?
+free_transport: false           # можно добраться бесплатно (ж/д, MHD по условиям) — значок 🚆
+where: Košice                   # необязательно
+valid_to: 2026-12-31            # необязательно; после даты оффер уйдёт в archive/ сам
+verified: 2026-10-09            # дата, когда ТЫ последний раз сверил условия (старше 120 дней — оффер скрывается)
+priority: 0                     # необязательно: больше = раньше в очереди постов
+# check:                        # необязательно: что считать «оффер жив»
+#   contains: "ISIC"            #   на странице должно быть это слово
+#   # skip: true                #   или вообще не проверять ссылку (сайты за Cloudflare)
+title:                          # минимум один язык из sk / en / uk / ru
+  en: "Short title (≤70 chars)"
+  sk: "Krátky názov"
+  uk: "Короткий заголовок"
+  ru: "Короткий заголовок"
+perk:                           # необязательно: выгода одной строкой (≤60)
+  en: "−50 % for students"
+desc:                           # 1–2 предложения (≤220 символов на язык)
+  en: "What it is, who gets it and how to claim it."
+  sk: "Čo to je, kto to získa a ako si to uplatniť."
+  uk: "Що це, кому доступно і як отримати."
+  ru: "Что это, кому доступно и как получить."

@@ -1,0 +1,79 @@
+# ============================================================
+#  ISIC Košice — главный конфиг. Меняется в браузере на GitHub.
+# ============================================================
+
+project:
+  name: "ISIC Košice"
+  repo: "YOUR_GITHUB_USER/isic-kosice"                  # <-- свой логин/репозиторий
+  pages_url: "https://YOUR_GITHUB_USER.github.io/isic-kosice/"
+
+telegram:
+  bot_username: "YOUR_BOT"        # без @, из BotFather
+  app_short_name: "catalog"       # короткое имя Mini App (BotFather -> /newapp). "" = ссылка на pages_url
+  channel_id: "@your_channel"     # один канал, все языки в одном посте. Можно переопределить секретом TELEGRAM_CHAT_ID
+  # Альтернатива: по каналу на язык (раскомментируй — тогда channel_id игнорируется)
+  # channels:
+  #   sk: "@isic_kosice_sk"
+  #   en: "@isic_kosice_en"
+  #   uk: "@isic_kosice_ua"
+  #   ru: "@isic_kosice_ru"
+
+languages: [sk, en, uk, ru]       # только эти 4 языка допускаются в карточках
+
+post:
+  primary_lang: en                # язык, который виден сразу; остальные — в сворачиваемом блоке
+  max_posts_per_run: 1            # сколько постов за один запуск (расписание в .github/workflows/post.yml)
+  title_max: 70
+  perk_max: 60
+  desc_max: 220                   # ~ 1 минута чтения на все языки вместе
+  digest_items: 7
+
+# --- Автоочистка -------------------------------------------------
+maintenance:
+  max_age_days: 120               # если `verified` старше — оффер скрывается как «устаревший»
+  dead_after_failures: 3          # подряд дней с недоступной ссылкой -> архив
+  link_timeout_sec: 15
+
+# --- Реклама (монетизация) --------------------------------------
+ads:
+  every_n_posts: 5                # после стольких обычных постов в канале идёт рекламный
+  catalog_every: 6                # в каталоге рекламная карточка после каждых N карточек
+  utm_source: "isic_kosice"
+  labels:                         # обязательная пометка, она показывается всегда
+    sk: "Reklama"
+    en: "Ad"
+    uk: "Реклама"
+    ru: "Реклама"
+
+# --- Категории ---------------------------------------------------
+categories:
+  free:
+    emoji: "🎁"
+    name: {sk: "Zadarmo", en: "Free stuff", uk: "Безкоштовно", ru: "Бесплатно"}
+  subs:
+    emoji: "💳"
+    name: {sk: "Predplatné a zľavy", en: "Subscriptions & discounts", uk: "Підписки та знижки", ru: "Подписки и скидки"}
+  events:
+    emoji: "🎟️"
+    name: {sk: "Podujatia", en: "Events", uk: "Події", ru: "Мероприятия"}
+  trips:
+    emoji: "🚆"
+    name: {sk: "Výlety", en: "Day trips", uk: "Поїздки", ru: "Поездки"}
+  software:
+    emoji: "💻"
+    name: {sk: "Programy a appky", en: "Apps & software", uk: "Програми та застосунки", ru: "Программы и приложения"}
+  study:
+    emoji: "🎓"
+    name: {sk: "Štúdium a kurzy", en: "Study & courses", uk: "Навчання та курси", ru: "Учёба и курсы"}
+  games:
+    emoji: "🎮"
+    name: {sk: "Hry", en: "Games", uk: "Ігри", ru: "Игры"}
+  music:
+    emoji: "🎧"
+    name: {sk: "Hudba a médiá", en: "Music & media", uk: "Музика та медіа", ru: "Музыка и медиа"}
+  food:
+    emoji: "🍕"
+    name: {sk: "Jedlo a nápoje", en: "Food & drinks", uk: "Їжа та напої", ru: "Еда и напитки"}
+  other:
+    emoji: "✨"
+    name: {sk: "Ostatné", en: "Other", uk: "Інше", ru: "Разное"}

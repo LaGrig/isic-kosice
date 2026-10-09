@@ -1,0 +1,17 @@
+example: true                       # ПРИМЕР рекламной карточки, удали после просмотра
+id: example-ad
+sponsor: "Example Café"
+category: food
+url: https://example.com/cafe
+start: 2026-10-01
+end: 2027-03-31
+placements: [channel, app]
+channel_posts: 1
+title: {en: "Example: student lunch deal", sk: "Príklad: študentský obed", uk: "Приклад: студентський обід", ru: "Пример: студенческий обед"}
+perk: {en: "−10 % with ISIC", sk: "−10 % s ISIC", uk: "−10 % з ISIC", ru: "−10 % по ISIC"}
+where: Košice
+desc:
+  en: "How a sponsored card looks: same format as offers, clearly labelled as an ad."
+  sk: "Takto vyzerá reklamná karta: rovnaký formát ako ponuky, jasne označená ako reklama."
+  uk: "Так виглядає рекламна картка: той самий формат, чітко позначена як реклама."
+  ru: "Так выглядит рекламная карточка: тот же формат, чётко помечена как реклама."

@@ -1,0 +1,16 @@
+example: true                   # ПРИМЕР: не публикуется, пока нет переменной INCLUDE_EXAMPLES=true. Удали файл.
+id: example-music
+category: music
+url: https://example.com/music
+isic: true
+free: false
+valid_to: 2027-06-30
+verified: 2026-10-09
+added: 2026-10-09
+title: {en: "Example: student music plan", sk: "Príklad: študentský hudobný tarif", uk: "Приклад: студентський музичний тариф", ru: "Пример: студенческий музыкальный тариф"}
+perk: {en: "Student price", sk: "Študentská cena", uk: "Студентська ціна", ru: "Студенческая цена"}
+desc:
+  en: "Placeholder offer to preview the layout. Replace with a real, verified deal."
+  sk: "Ukážková ponuka na náhľad rozloženia. Nahraď ju reálnou, overenou ponukou."
+  uk: "Приклад пропозиції для перегляду макета. Заміни на реальну перевірену."
+  ru: "Пример оффера для просмотра макета. Замени на реальный проверенный."
