@@ -1,0 +1,65 @@
+name: Post to Telegram
+
+# Расписание постов. Время в UTC: 06:30 и 15:30 ≈ 08:30 и 17:30 в Кошице летом
+# (зимой на час раньше по местному). Меняй cron под себя.
+on:
+  schedule:
+    - cron: "30 6 * * *"
+    - cron: "30 15 * * *"
+    - cron: "0 9 * * 0"            # воскресенье: подборка недели
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "post | digest | menu | sync"
+        default: "post"
+      dry_run:
+        description: "Ничего не отправлять, только показать (true/false)"
+        default: "false"
+
+concurrency:
+  group: catalog-write
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  INCLUDE_EXAMPLES: ${{ vars.INCLUDE_EXAMPLES }}
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Decide command
+        id: cmd
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.command }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 9 * * 0" ]; then
+            echo "name=digest" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=post" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DRY_RUN: ${{ inputs.dry_run == 'true' && '1' || '0' }}
+        run: python scripts/post.py "${{ steps.cmd.outputs.name }}"
+
+      - name: Commit state
+        if: always()
+        run: |
+          git config user.name "isic-bot"
+          git config user.email "isic-bot@users.noreply.github.com"
+          git add state
+          git diff --cached --quiet || git commit -m "chore: posting state"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push
