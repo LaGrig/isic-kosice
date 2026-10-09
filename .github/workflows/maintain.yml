@@ -1,0 +1,66 @@
+name: Maintain catalog
+
+# Ежедневно: проверка файлов -> проверка ссылок -> архив истёкших/мёртвых ->
+# пометка завершённых постов в канале -> публикация каталога на GitHub Pages.
+on:
+  schedule:
+    - cron: "15 4 * * *"          # 04:15 UTC (~06:15 в Кошице летом)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["offers/**", "ads/**", "config.yml", "docs/index.html"]
+
+concurrency:
+  group: catalog-write
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  INCLUDE_EXAMPLES: ${{ vars.INCLUDE_EXAMPLES }}
+
+jobs:
+  maintain:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Check links, archive, build data
+        run: python scripts/build.py --check-links --archive
+
+      - name: Mark ended offers in the channel
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/post.py sync --soft
+
+      - name: Commit changes
+        if: always()
+        run: |
+          git config user.name "isic-bot"
+          git config user.email "isic-bot@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "chore: daily maintenance"
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      # Каталог уже опубликован из валидных файлов; если есть битые — запуск станет красным и придёт письмо.
+      - name: Fail if some offer files are invalid
+        run: python scripts/build.py --strict > /dev/null
